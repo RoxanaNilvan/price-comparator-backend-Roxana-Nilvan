@@ -1,0 +1,11 @@
+product_id;product_name;product_category;brand;package_quantity;package_unit;price;currency
+P001;lapte zuzu;lactate;Zuzu;1;l;9.80;RON
+P002;iaurt grecesc;lactate;Lidl;0.4;kg;11.60;RON
+P005;ouă mărimea M;ouă;Lidl;10;buc;13.10;RON
+P008;brânză telemea;lactate;Pilos;0.3;kg;12.90;RON
+P011;pâine albă;panificație;Lidl;500;g;3.40;RON
+P014;roșii cherry;legume și fructe;Lidl;250;g;6.90;RON
+P017;piept pui;carne;Lidl;1;kg;28.90;RON
+P020;spaghetti nr.5;paste făinoase;Barilla;500;g;5.70;RON
+P021;zahăr tos;alimente de bază;Lidl;1;kg;4.30;RON
+P024;apă plată;băuturi;Aqua Carpatica;2;l;5.10;RON

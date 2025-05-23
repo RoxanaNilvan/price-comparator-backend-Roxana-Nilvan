@@ -1,0 +1,5 @@
+product_id;product_name;brand;package_quantity;package_unit;product_category;from_date;to_date;percentage_of_discount
+P004;iaurt grecesc;Proxi;0.4;kg;lactate;2025-05-08;2025-05-14;9
+P007;ouă mărimea M;Din Ogradă;10;buc;ouă;2025-05-08;2025-05-14;10
+P020;spaghetti nr.5;Barilla;500;g;paste făinoase;2025-05-09;2025-05-15;15
+P024;apă plată;Aqua Carpatica;2;l;băuturi;2025-05-10;2025-05-16;7
