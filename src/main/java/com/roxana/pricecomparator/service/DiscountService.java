@@ -4,7 +4,7 @@ import com.roxana.pricecomparator.model.Discount;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +20,20 @@ public class DiscountService {
 
     @PostConstruct
     public void init() {
-        discountsByStore.put("lidl", csvService.readDiscountsFromCsv("lidl_discounts_2025-05-01.csv"));
-        discountsByStore.put("profi", csvService.readDiscountsFromCsv("profi_discounts_2025-05-01.csv"));
-        discountsByStore.put("kaufland", csvService.readDiscountsFromCsv("kaufland_discounts_2025-05-01.csv"));
+        loadDiscounts("lidl", "2025-05-01");
+        loadDiscounts("lidl", "2025-05-08");
+        loadDiscounts("profi", "2025-05-01");
+        loadDiscounts("profi", "2025-05-08");
+        loadDiscounts("kaufland", "2025-05-01");
+        loadDiscounts("kaufland", "2025-05-08");
+    }
+
+    private void loadDiscounts(String store, String date) {
+        String fileName = store + "_discounts_" + date + ".csv";
+        List<Discount> discounts = csvService.readDiscountsFromCsv(fileName);
+        discountsByStore
+                .computeIfAbsent(store.toLowerCase(), k -> new ArrayList<>())
+                .addAll(discounts);
     }
 
     public Map<String, List<Discount>> getAllDiscounts() {
@@ -31,19 +42,5 @@ public class DiscountService {
 
     public List<Discount> getDiscountsForStore(String store) {
         return discountsByStore.get(store.toLowerCase());
-    }
-
-    public List<Discount> getTopDiscounts(int limit) {
-        LocalDate today = LocalDate.now();
-        return discountsByStore.values().stream()
-                .flatMap(List::stream)
-                .filter(d -> {
-                    LocalDate from = LocalDate.parse(d.getFromDate());
-                    LocalDate to = LocalDate.parse(d.getToDate());
-                    return !today.isBefore(from) && !today.isAfter(to);
-                })
-                .sorted((a, b) -> Integer.compare(b.getPercentage(), a.getPercentage()))
-                .limit(limit)
-                .toList();
     }
 }
