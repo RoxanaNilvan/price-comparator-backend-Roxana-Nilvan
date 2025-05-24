@@ -31,4 +31,9 @@ public class DiscountController {
         }
         return ResponseEntity.ok(discounts);
     }
+
+    @GetMapping("/new")
+    public ResponseEntity<List<Discount>> getNewDiscounts() {
+        return ResponseEntity.ok(discountService.getNewDiscounts());
+    }
 }
