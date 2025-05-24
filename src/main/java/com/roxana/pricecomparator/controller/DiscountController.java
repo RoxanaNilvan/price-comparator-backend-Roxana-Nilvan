@@ -31,4 +31,9 @@ public class DiscountController {
         }
         return ResponseEntity.ok(discounts);
     }
+
+    @GetMapping("/best")
+    public ResponseEntity<List<Discount>> getTopDiscounts(@RequestParam(defaultValue = "5") int limit) {
+        return ResponseEntity.ok(discountService.getTopDiscounts(limit));
+    }
 }

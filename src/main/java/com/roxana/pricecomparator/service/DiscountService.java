@@ -4,6 +4,7 @@ import com.roxana.pricecomparator.model.Discount;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,5 +31,19 @@ public class DiscountService {
 
     public List<Discount> getDiscountsForStore(String store) {
         return discountsByStore.get(store.toLowerCase());
+    }
+
+    public List<Discount> getTopDiscounts(int limit) {
+        LocalDate today = LocalDate.now();
+        return discountsByStore.values().stream()
+                .flatMap(List::stream)
+                .filter(d -> {
+                    LocalDate from = LocalDate.parse(d.getFromDate());
+                    LocalDate to = LocalDate.parse(d.getToDate());
+                    return !today.isBefore(from) && !today.isAfter(to);
+                })
+                .sorted((a, b) -> Integer.compare(b.getPercentage(), a.getPercentage()))
+                .limit(limit)
+                .toList();
     }
 }
