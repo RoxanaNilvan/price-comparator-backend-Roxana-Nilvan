@@ -28,4 +28,9 @@ public class AlertController {
     public ResponseEntity<List<Product>> getTriggeredAlerts() {
         return ResponseEntity.ok(alertService.checkAlerts());
     }
+
+    @GetMapping
+    public ResponseEntity<List<PriceAlertDTO>> getAllAlerts() {
+        return ResponseEntity.ok(alertService.getAllAlerts());
+    }
 }

@@ -11,14 +11,18 @@ import java.util.Map;
 @Service
 public class AlertService {
     private final ProductService productService;
-    private final List<PriceAlertDTO> alerts = new ArrayList<>();
+    private final AlertCSVService alertCSVService;
+    private List<PriceAlertDTO> alerts = new ArrayList<>();
 
-    public AlertService(ProductService productService) {
+    public AlertService(ProductService productService, AlertCSVService alertCSVService) {
         this.productService = productService;
+        this.alertCSVService = alertCSVService;
+        this.alerts = alertCSVService.loadAlerts();
     }
 
     public void addAlert(PriceAlertDTO alert) {
         alerts.add(alert);
+        alertCSVService.saveAlerts(alerts);
     }
 
     public List<Product> checkAlerts() {
@@ -32,5 +36,9 @@ public class AlertService {
                         )
                 )
                 .toList();
+    }
+
+    public List<PriceAlertDTO> getAllAlerts() {
+        return alerts;
     }
 }
