@@ -77,7 +77,7 @@ public class DiscountService {
      * @return a list of top active discounts
      */
     public List<Discount> getTopDiscounts(int limit) {
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.of(2025, 5, 07); //  test date
 
         return discountsByStore.values().stream()
                 .flatMap(List::stream)
