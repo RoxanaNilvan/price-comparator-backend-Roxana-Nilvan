@@ -18,14 +18,26 @@ public class BasketService {
         this.discountService = discountService;
     }
 
+    /**
+     * Finds the best store for each product in the user's shopping basket,
+     * selecting the store that offers the lowest total price after applying
+     * valid discounts for the current date.
+     *
+     * @param items List of items the user wants to purchase (productId + quantity)
+     * @return A response with the optimal split per product and total cost
+     */
     public BasketSplitResponseDTO optimizeSplit(List<BasketRequestItemDTO> items) {
+        // Load all product and discount data from CSV for all stores
         Map<String, List<Product>> allProducts = productService.getAllProducts();
         Map<String, List<Discount>> allDiscounts = discountService.getAllDiscounts();
-        LocalDate today = LocalDate.of(2025, 5, 06); // data test
+
+        // Define the current date for which discounts are evaluated (can be now() in prod)
+        LocalDate today = LocalDate.of(2025, 5, 06); // test date
 
         List<BasketSplitProductDTO> results = new ArrayList<>();
         double total = 0.0;
 
+        // Loop over each product in the basket
         for (BasketRequestItemDTO item : items) {
             String productId = item.getProductId();
             int quantity = item.getQuantity();
@@ -33,7 +45,9 @@ public class BasketService {
             BasketSplitProductDTO best = null;
             double bestSubtotal = Double.MAX_VALUE;
 
+            // Check which store offers this product at the best discounted price
             for (String store : allProducts.keySet()) {
+                // Try to find the product in this store
                 Optional<Product> match = allProducts.get(store).stream()
                         .filter(p -> p.getProductId().equals(productId))
                         .findFirst();
@@ -41,6 +55,8 @@ public class BasketService {
                 if (match.isEmpty()) continue;
 
                 Product product = match.get();
+
+                // Check for an active discount on the product in this store
                 Discount discount = allDiscounts.getOrDefault(store, List.of()).stream()
                         .filter(d -> d.getProductId().equals(productId))
                         .filter(d -> {
@@ -51,10 +67,12 @@ public class BasketService {
                         .findFirst()
                         .orElse(null);
 
+                // Calculate final price with discount
                 int discountPercent = discount != null ? discount.getPercentage() : 0;
                 double finalPrice = product.getPrice() * (1 - discountPercent / 100.0);
                 double subtotal = finalPrice * quantity;
 
+                // Save this store if it's the best price so far
                 if (subtotal < bestSubtotal) {
                     best = new BasketSplitProductDTO(
                             productId,
@@ -74,10 +92,12 @@ public class BasketService {
                 results.add(best);
                 total += best.getSubtotal();
             } else {
-                System.out.println("⚠️  Product with ID '" + productId + "' not found in any store for date " );
+                // Log if no store had the requested product
+                System.out.println("⚠️  Product with ID '" + productId + "' not found in any store for date ");
             }
         }
 
+        // Return total cost and store-by-store breakdown
         return new BasketSplitResponseDTO(total, results);
     }
 }

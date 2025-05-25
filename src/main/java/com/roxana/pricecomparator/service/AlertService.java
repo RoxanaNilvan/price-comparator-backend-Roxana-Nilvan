@@ -25,17 +25,27 @@ public class AlertService {
         alertCSVService.saveAlerts(alerts);
     }
 
+    /**
+     * Checks all stored price alerts against the current product prices
+     * across all stores, and returns the list of products that match an alert
+     * (i.e., their price is at or below the target price set by the user).
+     *
+     * @return List of products that triggered at least one alert
+     */
     public List<Product> checkAlerts() {
+        // Load all products currently available in all stores
         Map<String, List<Product>> allProducts = productService.getAllProducts();
 
+        // For each alert, search all products in all stores for a match
         return alerts.stream()
-                .flatMap(alert -> allProducts.entrySet().stream()
-                        .flatMap(e -> e.getValue().stream()
-                                .filter(p -> p.getProductId().equals(alert.getProductId()))
-                                .filter(p -> p.getPrice() <= alert.getTargetPrice())
-                        )
+                .flatMap(alert ->
+                        allProducts.entrySet().stream() // iterate through each store
+                                .flatMap(entry -> entry.getValue().stream() // iterate through products in that store
+                                        .filter(p -> p.getProductId().equals(alert.getProductId())) // match product ID
+                                        .filter(p -> p.getPrice() <= alert.getTargetPrice())         // check if price is low enough
+                                )
                 )
-                .toList();
+                .toList(); // collect matched products
     }
 
     public List<PriceAlertDTO> getAllAlerts() {

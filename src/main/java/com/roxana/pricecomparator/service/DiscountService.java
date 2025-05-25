@@ -45,17 +45,27 @@ public class DiscountService {
         return discountsByStore.get(store.toLowerCase());
     }
 
+    /**
+     * Retrieves all discounts that have been added recently,
+     * meaning their start date is today or yesterday.
+     *
+     * This simulates a 24-hour "new discounts" feed.
+     *
+     * @return A sorted list of new discounts across all stores
+     */
     public List<Discount> getNewDiscounts() {
-        LocalDate today = LocalDate.of(2025, 5, 07);
+        // Define today's and yesterday's date for the comparison window
+        LocalDate today = LocalDate.of(2025, 5, 07); //  test date
         LocalDate yesterday = today.minusDays(1);
 
         return discountsByStore.values().stream()
-                .flatMap(List::stream)
+                .flatMap(List::stream) // flatten all discounts from all stores
                 .filter(d -> {
+                    // Parse discount start date and check if it's recent
                     LocalDate from = LocalDate.parse(d.getFromDate());
                     return from.equals(today) || from.equals(yesterday);
                 })
-                .sorted((a, b) -> b.getFromDate().compareTo(a.getFromDate()))
+                .sorted((a, b) -> b.getFromDate().compareTo(a.getFromDate())) // newest first
                 .toList();
     }
 }
