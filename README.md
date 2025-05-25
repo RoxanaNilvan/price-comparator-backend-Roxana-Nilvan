@@ -109,6 +109,8 @@ Products are assumed to match across stores via their product_id.
 
 Alerts are stored in alerts.csv and automatically reloaded on startup.
 
+Discounts are evaluated by current date (can be overridden in code for testability).
+
 The application is designed with extensibility in mind:
 
 – Services are modular and replaceable (e.g., CSV → DB)
@@ -117,4 +119,4 @@ The application is designed with extensibility in mind:
 
 – Logic allows future additions (e.g., promotions, bundle discounts)
 
-Discounts are evaluated by current date (can be overridden in code for testability).
+
