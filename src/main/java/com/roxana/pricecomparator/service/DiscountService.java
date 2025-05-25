@@ -69,15 +69,25 @@ public class DiscountService {
                 .toList();
     }
 
+    /**
+     * Returns a list of the top active discounts across all stores for the current day.
+     * Filters discounts that are currently valid and sorts them by percentage in descending order.
+     *
+     * @param limit the maximum number of discounts to return
+     * @return a list of top active discounts
+     */
     public List<Discount> getTopDiscounts(int limit) {
-        LocalDate today = LocalDate.of(2025, 5, 07);
+        LocalDate today = LocalDate.now();
+
         return discountsByStore.values().stream()
                 .flatMap(List::stream)
                 .filter(d -> {
                     LocalDate from = LocalDate.parse(d.getFromDate());
                     LocalDate to = LocalDate.parse(d.getToDate());
+                    // Include only discounts valid on today's date
                     return !today.isBefore(from) && !today.isAfter(to);
                 })
+                // Sort discounts by percentage in descending order
                 .sorted((a, b) -> Integer.compare(b.getPercentage(), a.getPercentage()))
                 .limit(limit)
                 .toList();
