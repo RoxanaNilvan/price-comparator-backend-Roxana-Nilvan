@@ -68,4 +68,18 @@ public class DiscountService {
                 .sorted((a, b) -> b.getFromDate().compareTo(a.getFromDate())) // newest first
                 .toList();
     }
+
+    public List<Discount> getTopDiscounts(int limit) {
+        LocalDate today = LocalDate.of(2025, 5, 07);
+        return discountsByStore.values().stream()
+                .flatMap(List::stream)
+                .filter(d -> {
+                    LocalDate from = LocalDate.parse(d.getFromDate());
+                    LocalDate to = LocalDate.parse(d.getToDate());
+                    return !today.isBefore(from) && !today.isAfter(to);
+                })
+                .sorted((a, b) -> Integer.compare(b.getPercentage(), a.getPercentage()))
+                .limit(limit)
+                .toList();
+    }
 }
